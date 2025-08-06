@@ -1,0 +1,26 @@
+<header class="bg-white shadow-md">
+  <div class="max-w-6xl mx-auto px-4 flex justify-between items-center py-4">
+    <a routerLink="/public" class="text-2xl font-bold text-blue-700">AetherEye</a>
+    <nav class="flex space-x-6 text-gray-700">
+      <a routerLink="/public" routerLinkActive="font-bold underline" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+      <a routerLink="/public/productos" routerLinkActive="font-bold underline">Productos</a>
+      <a routerLink="/public/cotizacion" routerLinkActive="font-bold underline">Cotización</a>
+      <a routerLink="/public/contacto" routerLinkActive="font-bold underline">Contacto</a>
+      <a routerLink="/public/faq" routerLinkActive="font-bold underline">FAQ</a>
+      
+      @if (!isLoggedIn) {
+        <a routerLink="/auth/login" class="text-blue-600 font-semibold">Iniciar Sesión</a>
+      }
+      
+      @if (isLoggedIn) {
+        <span class="text-gray-600">Hola, {{ currentUser?.nombreCompleto }}</span>
+        @if (isAdmin) {
+          <a routerLink="/admin/dashboard" class="text-green-600 font-semibold">Admin</a>
+        } @else {
+          <a routerLink="/cliente/perfil" class="text-green-600 font-semibold">Mi Perfil</a>
+        }
+        <button (click)="logout()" class="text-red-600 font-semibold">Cerrar Sesión</button>
+      }
+    </nav>
+  </div>
+</header>

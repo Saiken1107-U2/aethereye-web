@@ -1,0 +1,26 @@
+<section class="max-w-6xl mx-auto p-6">
+  <h2 class="text-3xl font-bold mb-6">Comentarios de Clientes</h2>
+
+  <table class="w-full bg-white rounded shadow overflow-hidden">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-3 text-left">Producto</th>
+        <th class="p-3 text-left">Cliente</th>
+        <th class="p-3 text-left">Comentario</th>
+        <th class="p-3 text-left">Fecha</th>
+        <th class="p-3 text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let comentario of comentarios" class="border-t">
+        <td class="p-3">{{ comentario.producto }}</td>
+        <td class="p-3">{{ comentario.cliente }}</td>
+        <td class="p-3">{{ comentario.contenido }}</td>
+        <td class="p-3">{{ comentario.fecha | date:'shortDate' }}</td>
+        <td class="p-3 text-center">
+          <button (click)="eliminar(comentario.id)" class="text-red-600 hover:underline">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

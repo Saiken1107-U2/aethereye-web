@@ -1,0 +1,30 @@
+<section class="max-w-6xl mx-auto p-6">
+  <h2 class="text-3xl font-bold mb-6">Historial de Ventas</h2>
+
+  <table class="w-full bg-white rounded shadow overflow-hidden">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-3 text-left">Producto</th>
+        <th class="p-3 text-left">Cliente</th>
+        <th class="p-3 text-left">Cantidad</th>
+        <th class="p-3 text-left">Total</th>
+        <th class="p-3 text-left">Estado</th>
+        <th class="p-3 text-left">Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let venta of ventas" class="border-t">
+        <td class="p-3">{{ venta.producto }}</td>
+        <td class="p-3">{{ venta.cliente }}</td>
+        <td class="p-3">{{ venta.cantidad }}</td>
+        <td class="p-3">${{ venta.total }}</td>
+        <td class="p-3">
+          <span [ngClass]="venta.estado === 'Pendiente' ? 'text-yellow-600' : 'text-green-600'">
+            {{ venta.estado }}
+          </span>
+        </td>
+        <td class="p-3">{{ venta.fecha | date:'shortDate' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

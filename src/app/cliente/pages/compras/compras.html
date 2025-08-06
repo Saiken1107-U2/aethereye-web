@@ -1,0 +1,190 @@
+<section class="max-w-6xl mx-auto p-6">
+  <h2 class="text-3xl font-bold mb-8 text-center">Mis Compras</h2>
+
+  <!-- Debug info -->
+  <div class="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+    <p><strong>Debug Info:</strong></p>
+    <p>Estado de carga: {{ cargando ? 'Cargando...' : 'Terminado' }}</p>
+    <p>Error: {{ error || 'Ninguno' }}</p>
+    <p>Número de compras: {{ compras.length }}</p>
+    <button (click)="cargarCompras()" class="mt-2 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+      Recargar Compras
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (cargando) {
+    <div class="text-center">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <p class="mt-2 text-gray-600">Cargando compras...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error) {
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ error }}
+    </div>
+  }
+
+  <!-- Compras -->
+  @if (!cargando && !error) {
+    @if (compras.length > 0) {
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ID Compra
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Fecha
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Total
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Estado
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (compra of compras; track compra.id) {
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  #{{ compra.id }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatearFecha(compra.fecha) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                  {{ formatearMoneda(compra.total) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                    {{ compra.estado }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button 
+                    (click)="verDetalle(compra.id)"
+                    class="text-blue-600 hover:text-blue-900 transition-colors">
+                    Ver Detalle
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="text-center py-12">
+        <div class="mx-auto h-12 w-12 text-gray-400">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No tienes compras aún</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          Cuando aprueban tus cotizaciones, aparecerán aquí como compras completadas.
+        </p>
+      </div>
+    }
+  }
+</section>
+
+<!-- Modal de Detalle de Compra -->
+@if (mostrarModal) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+      <!-- Header del Modal -->
+      <div class="flex justify-between items-center p-6 border-b">
+        <h3 class="text-2xl font-bold text-gray-900">Detalle de Compra</h3>
+        <button 
+          (click)="cerrarModal()"
+          class="text-gray-400 hover:text-gray-600 text-2xl font-bold">
+          ×
+        </button>
+      </div>
+
+      <!-- Contenido del Modal -->
+      <div class="p-6">
+        @if (cargandoDetalle) {
+          <div class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-2 text-gray-600">Cargando detalle...</p>
+          </div>
+        }
+
+        @if (!cargandoDetalle && compraDetalle) {
+          <!-- Información de la Compra -->
+          <div class="bg-gray-50 rounded-lg p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <p class="text-sm text-gray-500">ID de Compra</p>
+                <p class="font-semibold">#{{ compraDetalle.compra.id }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Fecha</p>
+                <p class="font-semibold">{{ formatearFecha(compraDetalle.compra.fecha) }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Total</p>
+                <p class="font-semibold text-green-600">{{ formatearMoneda(compraDetalle.compra.total) }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detalles de Productos -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Productos Comprados</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full border border-gray-200 rounded-lg">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Producto</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Cantidad</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Precio Unitario</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  @for (detalle of compraDetalle.detalles; track detalle.id) {
+                    <tr>
+                      <td class="px-4 py-3 text-sm text-gray-900">{{ detalle.producto }}</td>
+                      <td class="px-4 py-3 text-sm text-gray-500">{{ detalle.cantidad }}</td>
+                      <td class="px-4 py-3 text-sm text-gray-500">{{ formatearMoneda(detalle.precioUnitario) }}</td>
+                      <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ formatearMoneda(detalle.subtotal) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div class="mt-6 pt-4 border-t">
+            <div class="flex justify-end">
+              <div class="text-right">
+                <p class="text-sm text-gray-500">Total de la Compra</p>
+                <p class="text-2xl font-bold text-green-600">{{ formatearMoneda(compraDetalle.compra.total) }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Footer del Modal -->
+      <div class="px-6 py-4 border-t bg-gray-50 flex justify-end">
+        <button 
+          (click)="cerrarModal()"
+          class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,18 @@
+<section *ngIf="!cargando" class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-2xl font-bold mb-6">Mis Documentos</h2>
+
+  <div *ngIf="documentos.length > 0; else noDocs">
+    <ul class="space-y-4">
+      <li *ngFor="let doc of documentos" class="flex items-center justify-between border-b pb-2">
+        <span>{{ doc.nombre }}</span>
+        <a [href]="doc.url" target="_blank" download class="text-blue-600 hover:underline">
+          Descargar
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #noDocs>
+    <p class="text-gray-600 text-center">No tienes documentos disponibles.</p>
+  </ng-template>
+</section>

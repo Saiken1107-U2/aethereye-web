@@ -1,0 +1,22 @@
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-800 text-white flex flex-col p-6 space-y-4">
+    <h2 class="text-2xl font-bold mb-6">Panel Admin</h2>
+    <nav class="flex flex-col space-y-2">
+      <a routerLink="/admin/dashboard" routerLinkActive="font-bold underline">Dashboard</a>
+      <a routerLink="/admin/usuarios" routerLinkActive="font-bold underline">Usuarios</a>
+      <a routerLink="/admin/productos" routerLinkActive="font-bold underline">Productos</a>
+      <a routerLink="/admin/ventas" routerLinkActive="font-bold underline">Ventas</a>
+      <a routerLink="/admin/cotizaciones" routerLinkActive="font-bold underline">Cotizaciones</a>
+      <a routerLink="/admin/comentarios" routerLinkActive="font-bold underline">Comentarios</a>
+    </nav>
+    <button class="mt-auto bg-white text-gray-800 px-4 py-2 rounded hover:bg-gray-100" (click)="cerrarSesion()">
+      Cerrar sesión
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8 bg-gray-100">
+    <router-outlet></router-outlet>
+  </main>
+</div>
