@@ -36,6 +36,11 @@ export class LoginComponent {
       return;
     }
 
+    // Prevenir múltiples envíos
+    if (this.loading) {
+      return;
+    }
+
     this.loading = true;
     this.error = false;
     this.errorMessage = '';
@@ -73,6 +78,7 @@ export class LoginComponent {
         this.loading = false;
         this.error = true;
         
+        // Manejo simple de errores
         if (err.status === 401) {
           this.errorMessage = 'Credenciales incorrectas. Por favor verifica tu email y contraseña.';
         } else if (err.status === 500) {
@@ -82,8 +88,6 @@ export class LoginComponent {
         } else {
           this.errorMessage = err.error?.message || 'Ha ocurrido un error inesperado.';
         }
-        
-        console.error('Error en login:', err);
       }
     });
   }

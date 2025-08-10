@@ -115,7 +115,7 @@ export class Productos implements OnInit {
   formatearMoneda(valor: number): string {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: 'COP'
+      currency: 'MXN'
     }).format(valor);
   }
 

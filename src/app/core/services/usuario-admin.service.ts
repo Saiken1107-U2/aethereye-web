@@ -27,10 +27,6 @@ export class UsuarioAdminService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  cambiarEstadoUsuario(id: number, estaActivo: boolean): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/estado`, { estaActivo });
-  }
-
   obtenerRoles(): Observable<any[]> {
     return this.http.get<any[]>('https://localhost:7052/api/Roles');
   }

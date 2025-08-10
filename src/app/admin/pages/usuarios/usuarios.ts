@@ -53,8 +53,23 @@ export class UsuariosComponent implements OnInit {
   }
 
   cargarRoles(): void {
-    this.usuarioService.obtenerRoles().subscribe(data => {
-      this.roles = data;
+    this.usuarioService.obtenerRoles().subscribe({
+      next: (data) => {
+        console.log('🔧 Datos de roles recibidos:', data);
+        
+        // Eliminar roles duplicados basándose en el nombre (más confiable)
+        const rolesUnicos = data.filter((rol, index, self) => 
+          index === self.findIndex(r => r.nombre.toLowerCase() === rol.nombre.toLowerCase())
+        );
+        
+        // Ordenar alfabéticamente
+        this.roles = rolesUnicos.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        
+        console.log('🔧 Roles únicos cargados:', this.roles);
+      },
+      error: (err) => {
+        console.error('❌ Error al cargar roles:', err);
+      }
     });
   }
 
@@ -100,11 +115,22 @@ export class UsuariosComponent implements OnInit {
       this.usuarioService.crearUsuario(usuario).subscribe({
         next: (response) => {
           console.log('✅ Usuario creado:', response);
+          
+          // 📧 Verificar si es un cliente para mostrar mensaje de correo
+          const rolSeleccionado = this.roles.find(r => r.id === usuario.rolId);
+          
+          if (rolSeleccionado && (rolSeleccionado.nombre === 'Cliente' || rolSeleccionado.nombre === 'cliente')) {
+            alert(`✅ Usuario cliente creado exitosamente!\n📧 Se han enviado las credenciales de acceso al correo: ${usuario.correo}`);
+          } else {
+            alert('✅ Usuario creado exitosamente!');
+          }
+          
           this.cargarUsuarios();
           this.resetForm();
         },
         error: (error) => {
           console.error('❌ Error al crear:', error);
+          alert('❌ Error al crear el usuario. Verifica los datos e intenta nuevamente.');
         }
       });
     }
@@ -130,17 +156,6 @@ export class UsuariosComponent implements OnInit {
   eliminar(id: number): void {
     if (confirm('¿Deseas eliminar este usuario?')) {
       this.usuarioService.eliminarUsuario(id).subscribe(() => {
-        this.cargarUsuarios();
-      });
-    }
-  }
-
-  cambiarEstado(usuario: any): void {
-    const nuevoEstado = !usuario.estaActivo;
-    const accion = nuevoEstado ? 'activar' : 'desactivar';
-    
-    if (confirm(`¿Deseas ${accion} este usuario?`)) {
-      this.usuarioService.cambiarEstadoUsuario(usuario.id, nuevoEstado).subscribe(() => {
         this.cargarUsuarios();
       });
     }

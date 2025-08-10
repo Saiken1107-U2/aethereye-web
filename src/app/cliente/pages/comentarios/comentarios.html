@@ -1,13 +1,13 @@
 <section *ngIf="!cargando" class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
   <div class="flex items-center gap-3 mb-8">
-    <div class="text-3xl">💬</div>
+    <div class="text-3xl"></div>
     <h2 class="text-3xl font-bold text-gray-800">Mis Comentarios</h2>
   </div>
 
   <!-- Alertas mejoradas -->
   <div *ngIf="exito" class="mb-6 bg-green-100 border-l-4 border-green-500 p-4 rounded-r-lg">
     <div class="flex">
-      <div class="text-green-500 text-xl mr-3">✅</div>
+      <div class="text-green-500 text-xl mr-3"></div>
       <div>
         <h4 class="text-green-800 font-semibold">¡Comentario enviado!</h4>
         <p class="text-green-700">Tu comentario ha sido publicado exitosamente.</p>
@@ -17,7 +17,7 @@
 
   <div *ngIf="error" class="mb-6 bg-red-100 border-l-4 border-red-500 p-4 rounded-r-lg">
     <div class="flex">
-      <div class="text-red-500 text-xl mr-3">❌</div>
+      <div class="text-red-500 text-xl mr-3"></div>
       <div>
         <h4 class="text-red-800 font-semibold">Error al enviar comentario</h4>
         <p class="text-red-700">{{ mensajeError }}</p>
@@ -32,24 +32,24 @@
     <form [formGroup]="form" (ngSubmit)="enviarComentario()" class="space-y-6">
       <div>
         <label class="block mb-2 font-medium text-gray-700">
-          <span class="text-lg">🛍️</span> Producto Comprado
+          <span class="text-lg"></span> Producto Comprado
         </label>
         <select formControlName="productoId" 
                 class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" 
                 [class.border-red-500]="form.get('productoId')?.invalid && form.get('productoId')?.touched">
           <option value="" disabled selected>Selecciona un producto que hayas comprado</option>
           <option *ngFor="let producto of productosComprados" [value]="producto.productoId">
-            🎁 {{ producto.productoNombre }} (Comprado: {{ producto.fechaCompra | date:'short' }})
+            {{ producto.productoNombre }} (Comprado: {{ producto.fechaCompra | date:'short' }})
           </option>
         </select>
         <div *ngIf="form.get('productoId')?.invalid && form.get('productoId')?.touched" 
              class="text-red-500 text-sm mt-1 flex items-center gap-1">
-          <span>⚠️</span> Debes seleccionar un producto que hayas comprado
+          <span></span> Debes seleccionar un producto que hayas comprado
         </div>
         <div *ngIf="productosComprados.length === 0" 
              class="bg-blue-50 border-l-4 border-blue-400 p-3 mt-2 rounded-r">
           <div class="flex items-center">
-            <span class="text-blue-400 text-lg mr-2">💡</span>
+            <span class="text-blue-400 text-lg mr-2"></span>
             <span class="text-blue-800 text-sm">
               Solo puedes comentar productos que hayas comprado. 
               <strong>Realiza una compra para poder dejar comentarios.</strong>
@@ -76,7 +76,7 @@
         </div>
         <div *ngIf="form.get('calificacion')?.invalid && form.get('calificacion')?.touched" 
              class="text-red-500 text-sm mt-1 flex items-center gap-1">
-          <span>⚠️</span> La calificación es requerida
+          <span></span> La calificación es requerida
         </div>
       </div>
 
@@ -92,7 +92,7 @@
         <div class="flex justify-between items-center mt-1">
           <div *ngIf="form.get('comentarioTexto')?.invalid && form.get('comentarioTexto')?.touched" 
                class="text-red-500 text-sm flex items-center gap-1">
-            <span>⚠️</span> El comentario es requerido (mínimo 5 caracteres)
+            <span></span> El comentario es requerido (mínimo 5 caracteres)
           </div>
           <div class="text-gray-400 text-sm">
             {{ form.get('comentarioTexto')?.value?.length || 0 }} caracteres
@@ -123,7 +123,7 @@
       <div *ngFor="let c of comentarios" 
            class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
         <div class="flex justify-between items-start mb-3">
-          <h4 class="font-semibold text-lg text-gray-800">🎁 {{ c.producto }}</h4>
+          <h4 class="font-semibold text-lg text-gray-800"> {{ c.producto }}</h4>
           <span class="text-sm text-gray-500">{{ c.fecha | date:'short' }}</span>
         </div>
         
@@ -144,7 +144,7 @@
 
     <ng-template #noComentarios>
       <div class="text-center py-8 bg-gray-50 rounded-lg">
-        <div class="text-6xl mb-4">😊</div>
+        <div class="text-6xl mb-4"></div>
         <p class="text-gray-600 text-lg">No has dejado comentarios aún.</p>
         <p class="text-gray-500 text-sm mt-2">
           Compra un producto y deja tu primera reseña para ayudar a otros usuarios.
