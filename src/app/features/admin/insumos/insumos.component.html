@@ -1,0 +1,490 @@
+<div class="container mx-auto p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Gestión de Insumos</h1>
+    <button 
+      type="button"
+      (click)="abrirFormulario()"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      Nuevo Insumo
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="bg-white rounded-lg shadow p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Búsqueda -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+        <input
+          type="text"
+          [(ngModel)]="busqueda"
+          placeholder="Nombre, código o descripción..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <!-- Filtro por categoría -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+        <select
+          [(ngModel)]="filtroCategoria"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Todas las categorías</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
+        </select>
+      </div>
+
+      <!-- Filtro por stock -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Estado Stock</label>
+        <select
+          [(ngModel)]="filtroStock"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Todos</option>
+          <option value="agotado">Agotado</option>
+          <option value="bajo">Stock Bajo</option>
+        </select>
+      </div>
+
+      <!-- Botón limpiar filtros -->
+      <div class="flex items-end">
+        <button
+          type="button"
+          (click)="busqueda = ''; filtroCategoria = ''; filtroStock = ''"
+          class="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+          Limpiar Filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    {{ error }}
+  </div>
+
+  <div *ngIf="success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+    {{ success }}
+  </div>
+
+  <!-- Formulario Modal -->
+  <div *ngIf="mostrarFormulario" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">{{ isEditing ? 'Editar Insumo' : 'Nuevo Insumo' }}</h2>
+        <button 
+          type="button"
+          (click)="cerrarFormulario()"
+          class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <form [formGroup]="insumoForm" (ngSubmit)="guardarInsumo()">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Información básica -->
+          <div class="md:col-span-2 lg:col-span-3 border-b pb-4 mb-4">
+            <h3 class="text-lg font-semibold mb-3">Información Básica</h3>
+          </div>
+
+          <!-- Nombre -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Nombre del Insumo *
+            </label>
+            <input
+              type="text"
+              formControlName="nombre"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="campoTieneError('nombre')">
+            <div *ngIf="campoTieneError('nombre')" class="text-red-600 text-sm mt-1">
+              {{ obtenerErrorCampo('nombre') }}
+            </div>
+          </div>
+
+          <!-- Código Interno -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Código Interno
+            </label>
+            <input
+              type="text"
+              formControlName="codigoInterno"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <!-- Categoría -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Categoría *
+            </label>
+            <input
+              type="text"
+              formControlName="categoria"
+              list="categorias-list"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="campoTieneError('categoria')">
+            <datalist id="categorias-list">
+              <option *ngFor="let categoria of categorias" [value]="categoria">
+            </datalist>
+            <div *ngIf="campoTieneError('categoria')" class="text-red-600 text-sm mt-1">
+              {{ obtenerErrorCampo('categoria') }}
+            </div>
+          </div>
+
+          <!-- Descripción -->
+          <div class="md:col-span-2 lg:col-span-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Descripción
+            </label>
+            <textarea
+              formControlName="descripcion"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+          </div>
+
+          <!-- Información de stock y costos -->
+          <div class="md:col-span-2 lg:col-span-3 border-b pb-4 mb-4">
+            <h3 class="text-lg font-semibold mb-3">Stock y Costos</h3>
+          </div>
+
+          <!-- Unidad de Medida -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Unidad de Medida *
+            </label>
+            <input
+              type="text"
+              formControlName="unidadMedida"
+              placeholder="kg, litros, unidades, etc."
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="campoTieneError('unidadMedida')">
+            <div *ngIf="campoTieneError('unidadMedida')" class="text-red-600 text-sm mt-1">
+              {{ obtenerErrorCampo('unidadMedida') }}
+            </div>
+          </div>
+
+          <!-- Costo Unitario -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Costo Unitario *
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              formControlName="costoUnitario"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="campoTieneError('costoUnitario')">
+            <div *ngIf="campoTieneError('costoUnitario')" class="text-red-600 text-sm mt-1">
+              {{ obtenerErrorCampo('costoUnitario') }}
+            </div>
+          </div>
+
+          <!-- Stock Actual -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Stock Actual *
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              formControlName="stockActual"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="campoTieneError('stockActual')">
+            <div *ngIf="campoTieneError('stockActual')" class="text-red-600 text-sm mt-1">
+              {{ obtenerErrorCampo('stockActual') }}
+            </div>
+          </div>
+
+          <!-- Stock Mínimo -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Stock Mínimo *
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              formControlName="stockMinimo"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="campoTieneError('stockMinimo')">
+            <div *ngIf="campoTieneError('stockMinimo')" class="text-red-600 text-sm mt-1">
+              {{ obtenerErrorCampo('stockMinimo') }}
+            </div>
+          </div>
+
+          <!-- Stock Máximo -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Stock Máximo
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              formControlName="stockMaximo"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <!-- Proveedor -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Proveedor Principal
+            </label>
+            <select
+              formControlName="proveedorId"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Seleccionar proveedor</option>
+              <option *ngFor="let proveedor of proveedores" [value]="proveedor.id">
+                {{ proveedor.nombre }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Fecha de Vencimiento -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Fecha de Vencimiento
+            </label>
+            <input
+              type="date"
+              formControlName="fechaVencimiento"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end gap-3 mt-6">
+          <button
+            type="button"
+            (click)="cerrarFormulario()"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="loading || !insumoForm.valid"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+            <span *ngIf="loading">Guardando...</span>
+            <span *ngIf="!loading">{{ isEditing ? 'Actualizar' : 'Crear' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Ajuste de Stock -->
+  <div *ngIf="mostrarAjusteStock" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Ajustar Stock</h2>
+        <button 
+          type="button"
+          (click)="cerrarAjusteStock()"
+          class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mb-4 p-3 bg-gray-50 rounded">
+        <p class="font-medium">{{ insumoSeleccionado?.nombre }}</p>
+        <p class="text-sm text-gray-600">Stock actual: {{ insumoSeleccionado?.stockActual }} {{ insumoSeleccionado?.unidadMedida }}</p>
+      </div>
+
+      <form [formGroup]="movimientoForm" (ngSubmit)="aplicarAjusteStock()">
+        <!-- Tipo de Movimiento -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Movimiento *</label>
+          <select
+            formControlName="tipoMovimiento"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="ENTRADA">Entrada (Aumentar stock)</option>
+            <option value="SALIDA">Salida (Reducir stock)</option>
+            <option value="AJUSTE">Ajuste de inventario</option>
+          </select>
+        </div>
+
+        <!-- Cantidad -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad *</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0.01"
+            formControlName="cantidad"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="campoTieneError('cantidad', movimientoForm)">
+          <div *ngIf="campoTieneError('cantidad', movimientoForm)" class="text-red-600 text-sm mt-1">
+            {{ obtenerErrorCampo('cantidad', movimientoForm) }}
+          </div>
+        </div>
+
+        <!-- Costo Unitario -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Costo Unitario</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            formControlName="costoUnitario"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Motivo -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Motivo *</label>
+          <input
+            type="text"
+            formControlName="motivo"
+            placeholder="Compra, venta, ajuste de inventario, etc."
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="campoTieneError('motivo', movimientoForm)">
+          <div *ngIf="campoTieneError('motivo', movimientoForm)" class="text-red-600 text-sm mt-1">
+            {{ obtenerErrorCampo('motivo', movimientoForm) }}
+          </div>
+        </div>
+
+        <!-- Documento -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Documento de Referencia</label>
+          <input
+            type="text"
+            formControlName="documento"
+            placeholder="Factura, orden de compra, etc."
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end gap-3">
+          <button
+            type="button"
+            (click)="cerrarAjusteStock()"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="loading || !movimientoForm.valid"
+            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+            <span *ngIf="loading">Aplicando...</span>
+            <span *ngIf="!loading">Aplicar Ajuste</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de Insumos -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Insumo
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Stock
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Costo
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Proveedor
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngIf="loading">
+            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+              Cargando insumos...
+            </td>
+          </tr>
+          <tr *ngIf="!loading && insumosFiltrados.length === 0">
+            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+              No hay insumos que coincidan con los filtros
+            </td>
+          </tr>
+          <tr *ngFor="let insumo of insumosFiltrados" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex flex-col">
+                <div class="text-sm font-medium text-gray-900">{{ insumo.nombre }}</div>
+                <div class="text-sm text-gray-500">{{ insumo.categoria }}</div>
+                <div class="text-sm text-gray-500" *ngIf="insumo.codigoInterno">
+                  Código: {{ insumo.codigoInterno }}
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex flex-col">
+                <div class="text-sm font-medium">{{ insumo.stockActual }} {{ insumo.unidadMedida }}</div>
+                <div class="text-xs text-gray-500">Mín: {{ insumo.stockMinimo }}</div>
+                <span 
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full mt-1 w-fit"
+                  [ngClass]="obtenerClaseStock(obtenerEstadoStock(insumo))">
+                  {{ obtenerEstadoStock(insumo) === 'agotado' ? 'Agotado' : 
+                     obtenerEstadoStock(insumo) === 'bajo' ? 'Stock Bajo' : 'Normal' }}
+                </span>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium">${{ insumo.costoUnitario | currency:'':'symbol':'1.2-2' }}</div>
+              <div class="text-xs text-gray-500">por {{ insumo.unidadMedida }}</div>
+              <div class="text-xs text-gray-500">
+                Total: ${{ (insumo.stockActual * insumo.costoUnitario) | currency:'':'symbol':'1.2-2' }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">
+                {{ insumo.proveedorNombre || 'Sin asignar' }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex gap-2">
+                <button
+                  (click)="abrirFormulario(insumo)"
+                  class="text-blue-600 hover:text-blue-900 p-1"
+                  title="Editar">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                </button>
+                <button
+                  (click)="abrirAjusteStock(insumo)"
+                  class="text-green-600 hover:text-green-900 p-1"
+                  title="Ajustar Stock">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4zM9 6v10h6V6H9z"></path>
+                  </svg>
+                </button>
+                <button
+                  (click)="eliminarInsumo(insumo)"
+                  class="text-red-600 hover:text-red-900 p-1"
+                  title="Eliminar">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

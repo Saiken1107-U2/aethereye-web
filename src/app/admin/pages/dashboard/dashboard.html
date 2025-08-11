@@ -1,97 +1,73 @@
-<section class="max-w-6xl mx-auto p-6">
-  <h2 class="text-3xl font-bold mb-8">Dashboard Resumen</h2>
-
-  <!-- Métricas principales -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded shadow p-6 flex flex-col items-center">
-      <p class="text-xl font-semibold">Usuarios</p>
-      <p class="text-4xl font-bold text-blue-600">{{ totales.usuarios }}</p>
-      <span class="text-sm text-gray-500">Registrados</span>
-    </div>
-
-    <div class="bg-white rounded shadow p-6 flex flex-col items-center">
-      <p class="text-xl font-semibold">Productos</p>
-      <p class="text-4xl font-bold text-green-600">{{ totales.productos }}</p>
-      <span class="text-sm text-gray-500">Disponibles</span>
-    </div>
-
-    <div class="bg-white rounded shadow p-6 flex flex-col items-center">
-      <p class="text-xl font-semibold">Ventas</p>
-      <p class="text-4xl font-bold text-yellow-600">{{ totales.ventas }}</p>
-      <span class="text-sm text-gray-500">Este mes</span>
-    </div>
-
-    <div class="bg-white rounded shadow p-6 flex flex-col items-center">
-      <p class="text-xl font-semibold">Comentarios</p>
-      <p class="text-4xl font-bold text-purple-600">{{ totales.comentarios }}</p>
-      <span class="text-sm text-gray-500">Recibidos</span>
-    </div>
+<div class="dashboard-container">
+  <h1>Panel de Control - AetherEye</h1>
+  
+  <div *ngIf="loading" class="loading">
+    Cargando datos...
   </div>
 
-  <!-- Gráficos -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Gráfico de Ventas por Mes -->
-    <div class="bg-white rounded shadow p-6">
-      <h3 class="text-xl font-semibold mb-4">Ventas por Mes</h3>
-      <div class="relative" style="height: 300px;">
-        <canvas #ventasChart width="400" height="300"></canvas>
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && stats" class="dashboard-content">
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <h3>{{ stats!.totalInsumos }}</h3>
+        <p>Total Insumos</p>
+      </div>
+      
+      <div class="kpi-card">
+        <h3>{{ formatCurrency(stats!.valorTotalInventario) }}</h3>
+        <p>Valor Inventario</p>
+      </div>
+      
+      <div class="kpi-card">
+        <h3>{{ stats!.insumosStockBajo }}</h3>
+        <p>Stock Bajo</p>
+      </div>
+      
+      <div class="kpi-card">
+        <h3>{{ stats!.movimientosHoy }}</h3>
+        <p>Movimientos Hoy</p>
+      </div>
+      
+      <div class="kpi-card">
+        <h3>{{ stats!.totalProveedores }}</h3>
+        <p>Proveedores Activos</p>
       </div>
     </div>
 
-    <!-- Gráfico de Cotizaciones por Estado -->
-    <div class="bg-white rounded shadow p-6">
-      <h3 class="text-xl font-semibold mb-4">Cotizaciones por Estado</h3>
-      <div class="relative" style="height: 300px;">
-        @if (cotizacionesPorEstado.length > 0) {
-          <div class="flex flex-col space-y-4">
-            @for (estado of cotizacionesPorEstado; track estado.estado) {
-              <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                  <div [class]="'w-4 h-4 rounded mr-3 ' + getColorByStatus(estado.estado)"></div>
-                  <span class="font-medium">{{ estado.estado }}</span>
-                </div>
-                <div class="flex items-center">
-                  <span class="text-2xl font-bold mr-2">{{ estado.cantidad }}</span>
-                  <div class="w-24 bg-gray-200 rounded-full h-2">
-                    <div 
-                      [class]="'h-2 rounded-full ' + getColorByStatus(estado.estado)"
-                      [style.width.%]="(estado.cantidad / getTotalCotizaciones()) * 100">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
+    <div class="charts-section">
+      <div class="chart-card">
+        <h3>Stock por Categoría</h3>
+        <div *ngIf="stockByCategory.length > 0; else noData">
+          <div *ngFor="let category of stockByCategory" class="category-item">
+            <span>{{ category.categoria }}: {{ category.cantidad }} items</span>
+            <span>{{ formatCurrency(category.valorTotal) }}</span>
           </div>
-        } @else {
-          <div class="text-center text-gray-500 py-8">
-            No hay datos de cotizaciones
+        </div>
+        <ng-template #noData>
+          <p>No hay datos disponibles</p>
+        </ng-template>
+      </div>
+
+      <div class="chart-card">
+        <h3>Alertas de Stock Bajo</h3>
+        <div *ngIf="alerts.length > 0; else noAlerts">
+          <div *ngFor="let alert of alerts" class="alert-item">
+            <span>{{ alert.nombre }}</span>
+            <span>{{ alert.stockActual }}/{{ alert.stockMinimo }}</span>
+            <span class="urgency">{{ alert.urgencia }}</span>
           </div>
-        }
+        </div>
+        <ng-template #noAlerts>
+          <p>¡Todos los insumos tienen stock suficiente!</p>
+        </ng-template>
       </div>
     </div>
-  </div>
 
-  <!-- Últimas actividades -->
-  <div class="mt-8 bg-white rounded shadow p-6">
-    <h3 class="text-xl font-semibold mb-4">Últimas Actividades</h3>
-    @if (ultimasActividades.length > 0) {
-      <div class="space-y-3">
-        @for (actividad of ultimasActividades; track $index) {
-          <div class="flex items-center p-3 border-l-4 border-blue-500 bg-blue-50">
-            <div class="flex-1">
-              <p class="font-medium">{{ actividad.descripcion }}</p>
-              <p class="text-sm text-gray-600">{{ actividad.fecha | date:'short' }}</p>
-            </div>
-            <span [class]="'px-2 py-1 rounded text-xs font-medium ' + getActivityColor(actividad.tipo)">
-              {{ actividad.tipo }}
-            </span>
-          </div>
-        }
-      </div>
-    } @else {
-      <div class="text-center text-gray-500 py-4">
-        No hay actividades recientes
-      </div>
-    }
+    <div class="footer">
+      <p>Última actualización: {{ formatDate(stats!.fechaActualizacion) }}</p>
+    </div>
   </div>
-</section>
+</div>

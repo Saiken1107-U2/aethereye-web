@@ -1,0 +1,254 @@
+<div class="compras-container">
+  <!-- Header -->
+  <div class="header-section">
+    <h1>Gestión de Compras</h1>
+    <div class="header-actions">
+      <button 
+        *ngIf="vistaActual === 'lista'"
+        class="btn btn-primary" 
+        (click)="mostrarFormulario()">
+        <i class="fas fa-plus"></i> Nueva Compra
+      </button>
+      <button 
+        *ngIf="vistaActual === 'nueva'"
+        class="btn btn-secondary" 
+        (click)="mostrarLista()">
+        <i class="fas fa-arrow-left"></i> Volver a Lista
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+
+  <!-- Vista Lista -->
+  <div *ngIf="vistaActual === 'lista' && !loading" class="lista-view">
+    
+    <!-- Estadísticas -->
+    <div *ngIf="estadisticas" class="estadisticas-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-shopping-cart"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ estadisticas.totalComprasDelMes }}</h3>
+          <p>Compras del Mes</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ formatCurrency(estadisticas.montoTotalDelMes) }}</h3>
+          <p>Monto Total del Mes</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ formatCurrency(estadisticas.promedioCompra) }}</h3>
+          <p>Promedio por Compra</p>
+        </div>
+      </div>
+      
+      <div class="stat-card" *ngIf="estadisticas.proveedorMasActivo">
+        <div class="stat-icon">
+          <i class="fas fa-truck"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ estadisticas.proveedorMasActivo.nombreProveedor }}</h3>
+          <p>Proveedor Más Activo</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de Compras -->
+    <div class="table-container">
+      <table class="compras-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Proveedor</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let compra of compras">
+            <td>{{ compra.id }}</td>
+            <td>{{ formatDate(compra.fecha) }}</td>
+            <td>{{ compra.proveedor.nombre }}</td>
+            <td>{{ compra.totalItems }}</td>
+            <td>{{ formatCurrency(compra.total) }}</td>
+            <td>
+              <span class="estado-badge" [ngClass]="compra.estado.toLowerCase()">
+                {{ compra.estado }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-info" title="Ver Detalles">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-warning" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div *ngIf="compras.length === 0 && !loading" class="no-data">
+        <i class="fas fa-inbox"></i>
+        <p>No hay compras registradas</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista Nueva Compra -->
+  <div *ngIf="vistaActual === 'nueva' && !loading" class="nueva-compra-view">
+    <form [formGroup]="compraForm" (ngSubmit)="guardarCompra()">
+      
+      <!-- Información General -->
+      <div class="form-section">
+        <h3>Información General</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="proveedor">Proveedor *</label>
+            <select id="proveedor" formControlName="proveedorId" class="form-control">
+              <option value="">Seleccione un proveedor</option>
+              <option *ngFor="let proveedor of proveedores" [value]="proveedor.id">
+                {{ proveedor.nombre }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="numeroFactura">Número de Factura</label>
+            <input 
+              type="text" 
+              id="numeroFactura" 
+              formControlName="numeroFactura" 
+              class="form-control"
+              placeholder="Ej: F-001234">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="observaciones">Observaciones</label>
+          <textarea 
+            id="observaciones" 
+            formControlName="observaciones" 
+            class="form-control"
+            rows="3"
+            placeholder="Observaciones adicionales sobre la compra..."></textarea>
+        </div>
+      </div>
+
+      <!-- Insumos -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3>Insumos a Comprar</h3>
+          <button type="button" class="btn btn-success btn-sm" (click)="agregarInsumo()">
+            <i class="fas fa-plus"></i> Agregar Insumo
+          </button>
+        </div>
+
+        <div formArrayName="insumos" class="insumos-container">
+          <div 
+            *ngFor="let insumoGroup of insumosFormArray.controls; let i = index" 
+            [formGroupName]="i" 
+            class="insumo-row">
+            
+            <div class="form-group">
+              <label>Insumo *</label>
+              <select 
+                formControlName="insumoId" 
+                class="form-control"
+                (change)="onInsumoChange(i)">
+                <option value="">Seleccione un insumo</option>
+                <option *ngFor="let insumo of insumos" [value]="insumo.id">
+                  {{ insumo.nombre }} (Stock: {{ insumo.stockActual }} {{ insumo.unidadMedida }})
+                </option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Cantidad *</label>
+              <input 
+                type="number" 
+                formControlName="cantidad" 
+                class="form-control"
+                step="0.01"
+                min="0.01">
+            </div>
+            
+            <div class="form-group">
+              <label>Costo Unitario *</label>
+              <input 
+                type="number" 
+                formControlName="costoUnitario" 
+                class="form-control"
+                step="0.01"
+                min="0.01">
+            </div>
+            
+            <div class="form-group">
+              <label>Subtotal</label>
+              <input 
+                type="text" 
+                [value]="formatCurrency(calcularSubtotal(i))" 
+                class="form-control"
+                readonly>
+            </div>
+            
+            <div class="form-group actions">
+              <label>&nbsp;</label>
+              <button 
+                type="button" 
+                class="btn btn-danger btn-sm" 
+                (click)="removerInsumo(i)"
+                [disabled]="insumosFormArray.length === 1">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div class="total-section">
+          <h4>Total: {{ formatCurrency(calcularTotal()) }}</h4>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="mostrarLista()">
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="!compraForm.valid || insumosFormArray.length === 0 || loading">
+          <i class="fas fa-save"></i> 
+          {{ loading ? 'Guardando...' : 'Registrar Compra' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -5,17 +5,17 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { AdminRoutingModule } from '../admin/admin-routing-module';
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout';
-import { DashboardComponent } from './pages/dashboard/dashboard';
 import { UsuariosComponent } from './pages/usuarios/usuarios';
 import { ProductosComponent } from './pages/productos/productos';
 import { VentasComponent } from './pages/ventas/ventas';
 import { ComentariosComponent } from './pages/comentarios/comentarios';
 import { CotizacionesAdminComponent } from './pages/cotizaciones/cotizaciones-admin.component';
+import { ProveedoresComponent } from '../features/admin/proveedores/proveedores.component';
+import { InsumosComponent } from '../features/admin/insumos/insumos.component';
 
 @NgModule({
   declarations: [
     AdminLayoutComponent,
-    DashboardComponent,
     UsuariosComponent,
     ProductosComponent,
     VentasComponent,
@@ -27,7 +27,9 @@ import { CotizacionesAdminComponent } from './pages/cotizaciones/cotizaciones-ad
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    ProveedoresComponent,
+    InsumosComponent
   ]
 })
 export class AdminModule {}

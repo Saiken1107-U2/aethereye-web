@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface DashboardStats {
   totalInsumos: number;
@@ -47,14 +48,7 @@ export interface TopItem {
 export class DashboardService {
   private apiUrl = 'http://localhost:5118/api/Dashboard';
 
-  constructor(private http: HttpClient) {}
-
-  // Método existente
-  obtenerTotales(): Observable<{ usuarios: number, productos: number, ventas: number, comentarios: number }> {
-    return this.http.get<{ usuarios: number, productos: number, ventas: number, comentarios: number }>(`${this.apiUrl}/totales`);
-  }
-
-  // Nuevos métodos para Dashboard avanzado
+  constructor(private http: HttpClient) { }
 
   // Obtener estadísticas principales del dashboard
   getStats(): Observable<DashboardStats> {
@@ -81,8 +75,12 @@ export class DashboardService {
     return this.http.get<TopItem[]>(`${this.apiUrl}/top-items/${count}`);
   }
 
-  // Endpoint legacy para compatibilidad
+  // Endpoints legacy para compatibilidad
   getResumen(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/resumen`);
+  }
+
+  getTotales(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/totales`);
   }
 }
