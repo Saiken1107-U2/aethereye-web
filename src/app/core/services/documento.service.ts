@@ -14,4 +14,10 @@ export class DocumentoService {
   obtenerDocumentosPorCliente(clienteId: number): Observable<Documento[]> {
     return this.http.get<Documento[]>(`${this.apiUrl}/cliente/${clienteId}`);
   }
+
+  descargarDocumento(documentoId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/descargar/${documentoId}`, { 
+      responseType: 'blob' 
+    });
+  }
 }

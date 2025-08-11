@@ -29,7 +29,6 @@ export class ComprasComponent implements OnInit {
 
   cargarCompras(): void {
     const usuarioActual = this.authService.obtenerUsuarioActual();
-    console.log('Usuario actual:', usuarioActual); // Debug log
     
     if (!usuarioActual) {
       this.error = 'No se pudo obtener el usuario actual';
@@ -37,32 +36,17 @@ export class ComprasComponent implements OnInit {
       return;
     }
 
-    console.log('Cargando compras para usuario ID:', usuarioActual.id); // Debug log
-
-    // Primero probar el endpoint de debug
-    this.ventaService.testComprasDelCliente(usuarioActual.id).subscribe({
-      next: (testData) => {
-        console.log('Test data:', testData);
-        // Luego cargar las compras normales
-        this.cargarComprasNormales(usuarioActual.id);
-      },
-      error: (err) => {
-        console.error('Error en test:', err);
-        // Si el test falla, intentar cargar normalmente
-        this.cargarComprasNormales(usuarioActual.id);
-      }
-    });
+    this.cargarComprasNormales(usuarioActual.id);
   }
 
   cargarComprasNormales(usuarioId: number): void {
     this.ventaService.obtenerComprasDelCliente(usuarioId).subscribe({
-      next: (compras) => {
-        console.log('Compras cargadas:', compras); // Debug log
+      next: (compras: Venta[]) => {
         this.compras = compras;
         this.cargando = false;
       },
-      error: (err) => {
-        console.error('Error detallado al cargar compras:', err);
+      error: (err: any) => {
+        console.error('Error al cargar compras:', err);
         this.error = `Error al cargar las compras: ${err.message || err.error || 'Error desconocido'}`;
         this.cargando = false;
       }
@@ -77,11 +61,11 @@ export class ComprasComponent implements OnInit {
     this.mostrarModal = true;
     
     this.ventaService.obtenerDetalleCompra(usuarioActual.id, compraId).subscribe({
-      next: (detalle) => {
+      next: (detalle: CompraDetallada) => {
         this.compraDetalle = detalle;
         this.cargandoDetalle = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al cargar detalle:', err);
         this.cargandoDetalle = false;
         this.cerrarModal();

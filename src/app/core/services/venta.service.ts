@@ -19,16 +19,8 @@ export class VentaService {
       );
   }
 
-  obtenerDetalleCompra(clienteId: number, ventaId: number): Observable<CompraDetallada> {
-    return this.http.get<CompraDetallada>(`${this.apiUrl}/cliente/${clienteId}/detalle/${ventaId}`)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  // Método temporal para debug
-  testComprasDelCliente(clienteId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/test/${clienteId}`)
+  obtenerDetalleCompra(clienteId: number, compraId: number): Observable<CompraDetallada> {
+    return this.http.get<CompraDetallada>(`${this.apiUrl}/cliente/${clienteId}/detalle/${compraId}`)
       .pipe(
         catchError(this.handleError)
       );

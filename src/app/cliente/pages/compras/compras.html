@@ -1,17 +1,6 @@
 <section class="max-w-6xl mx-auto p-6">
   <h2 class="text-3xl font-bold mb-8 text-center">Mis Compras</h2>
 
-  <!-- Debug info -->
-  <div class="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-    <p><strong>Debug Info:</strong></p>
-    <p>Estado de carga: {{ cargando ? 'Cargando...' : 'Terminado' }}</p>
-    <p>Error: {{ error || 'Ninguno' }}</p>
-    <p>Número de compras: {{ compras.length }}</p>
-    <button (click)="cargarCompras()" class="mt-2 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-      Recargar Compras
-    </button>
-  </div>
-
   <!-- Loading -->
   @if (cargando) {
     <div class="text-center">

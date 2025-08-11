@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Usuario, ActualizarPerfilRequest } from '../models/usuario.model';
+import { Usuario, ActualizarPerfilRequest, CambiarPasswordRequest } from '../models/usuario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,10 @@ export class UsuarioService {
 
   actualizarPerfil(id: number, request: ActualizarPerfilRequest): Observable<any> {
     return this.http.put(`${this.apiUrl}/actualizar/${id}`, request);
+  }
+
+  cambiarPassword(id: number, request: CambiarPasswordRequest): Observable<any> {
+    return this.http.put(`${this.apiUrl}/cambiar-password/${id}`, request);
   }
 
   // Para administradores

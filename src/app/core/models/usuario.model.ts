@@ -10,3 +10,8 @@ export interface ActualizarPerfilRequest {
   nombreCompleto: string;
   correo: string;
 }
+
+export interface CambiarPasswordRequest {
+  contrasenaActual: string;
+  contrasenaNueva: string;
+}

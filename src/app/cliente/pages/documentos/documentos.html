@@ -1,18 +1,63 @@
-<section *ngIf="!cargando" class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+<section *ngIf="!cargando && !error" class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
   <h2 class="text-2xl font-bold mb-6">Mis Documentos</h2>
+  <p class="text-gray-600 mb-4">Documentos relacionados con tus compras realizadas</p>
 
   <div *ngIf="documentos.length > 0; else noDocs">
-    <ul class="space-y-4">
-      <li *ngFor="let doc of documentos" class="flex items-center justify-between border-b pb-2">
-        <span>{{ doc.nombre }}</span>
-        <a [href]="doc.url" target="_blank" download class="text-blue-600 hover:underline">
-          Descargar
-        </a>
-      </li>
-    </ul>
+    <div class="grid gap-4">
+      <div *ngFor="let doc of documentos" class="flex items-center justify-between border rounded-lg p-4 hover:bg-gray-50">
+        <div class="flex-1">
+          <h3 class="font-semibold text-lg">{{ doc.nombre }}</h3>
+          <p class="text-sm text-gray-600" *ngIf="doc.nombreArchivo">{{ doc.nombreArchivo }}</p>
+          <p class="text-xs text-gray-500" *ngIf="doc.fechaCreacion">
+            Creado: {{ doc.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-500" *ngIf="doc.size">
+            {{ (doc.size / 1024 / 1024) | number:'1.1-1' }} MB
+          </span>
+          <button 
+            (click)="descargarDocumento(doc)" 
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Descargar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <ng-template #noDocs>
-    <p class="text-gray-600 text-center">No tienes documentos disponibles.</p>
+    <div class="text-center py-8">
+      <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      <p class="text-gray-600">No tienes documentos disponibles.</p>
+      <p class="text-sm text-gray-500 mt-2">Los documentos aparecerán aquí cuando realices compras.</p>
+    </div>
   </ng-template>
+</section>
+
+<!-- Mensaje de error -->
+<section *ngIf="error" class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+  <div class="text-center">
+    <svg class="w-16 h-16 mx-auto text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.315 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+    </svg>
+    <h2 class="text-2xl font-bold mb-2 text-red-600">Error</h2>
+    <p class="text-gray-600 mb-4">{{ error }}</p>
+    <button (click)="ngOnInit()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Reintentar
+    </button>
+  </div>
+</section>
+
+<!-- Indicador de carga -->
+<section *ngIf="cargando" class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+  <div class="text-center">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    <p class="mt-2 text-gray-600">Cargando documentos...</p>
+  </div>
 </section>
