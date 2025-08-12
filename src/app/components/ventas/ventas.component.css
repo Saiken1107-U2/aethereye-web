@@ -1,0 +1,93 @@
+.ventas-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+/* Animaciones para las tarjetas de estadísticas */
+.estadistica-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.estadistica-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Estilos para la tabla */
+.tabla-ventas {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Estados de venta con colores personalizados */
+.estado-pendiente {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.estado-procesando {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.estado-enviado {
+  background-color: #e9d5ff;
+  color: #7c3aed;
+}
+
+.estado-entregado {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.estado-cancelado {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ventas-container {
+    padding: 1rem;
+  }
+  
+  .grid-estadisticas {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .filtros-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading spinner personalizado */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Hover effects para botones */
+.btn-accion {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-accion:hover {
+  transform: scale(1.05);
+}
+
+/* Estilos para inputs de búsqueda */
+.input-busqueda:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Animación para filas de tabla */
+tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Destacar filas al hacer hover */
+tbody tr:hover {
+  background-color: #f8fafc;
+}

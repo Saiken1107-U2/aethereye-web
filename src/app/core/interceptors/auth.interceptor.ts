@@ -26,9 +26,18 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
         
-        // Si el error es 401 (No autorizado), cerrar sesión
+        console.log('🚨 Error HTTP interceptado:', { status: error.status, url: error.url });
+        
+        // Si el error es 401 (No autorizado)
         if (error.status === 401) {
-          this.authService.cerrarSesion();
+          // Solo cerrar sesión si el token realmente es inválido/expirado
+          const currentToken = this.authService.obtenerToken();
+          if (!currentToken || this.authService.isTokenExpired(currentToken)) {
+            console.log('🔐 Token inválido o expirado, cerrando sesión');
+            this.authService.cerrarSesion();
+          } else {
+            console.log('⚠️ Error 401 pero token válido, puede ser problema de permisos');
+          }
           return throwError(() => error);
         }
 

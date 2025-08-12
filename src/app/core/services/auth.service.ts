@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { tap, map, catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface Usuario {
   id: number;
@@ -27,7 +28,7 @@ export interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:7052/api';
+  private apiUrl = environment.apiUrl;
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   
@@ -142,7 +143,7 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  private isTokenExpired(token: string): boolean {
+  public isTokenExpired(token: string): boolean {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const exp = payload.exp * 1000; // Convertir a milisegundos

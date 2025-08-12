@@ -51,7 +51,7 @@ export interface CotizacionDetalle {
   providedIn: 'root'
 })
 export class CotizacionService {
-  private apiUrl = 'https://localhost:7052/api/Cotizaciones';
+  private apiUrl = 'http://localhost:5118/api/Cotizaciones';
 
   constructor(private http: HttpClient) {}
 

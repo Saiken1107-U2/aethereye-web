@@ -1,136 +1,170 @@
-<div class="compras-container">
+<div class="p-6 max-w-7xl mx-auto">
   <!-- Header -->
-  <div class="header-section">
-    <h1>Gestión de Compras</h1>
-    <div class="header-actions">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Gestión de Compras</h1>
+      <p class="text-gray-600 text-sm mt-1">Administra las compras de insumos</p>
+    </div>
+    <div>
       <button 
         *ngIf="vistaActual === 'lista'"
-        class="btn btn-primary" 
+        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" 
         (click)="mostrarFormulario()">
-        <i class="fas fa-plus"></i> Nueva Compra
+        <i class="fas fa-plus mr-2"></i> Nueva Compra
       </button>
       <button 
         *ngIf="vistaActual === 'nueva'"
-        class="btn btn-secondary" 
+        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" 
         (click)="mostrarLista()">
-        <i class="fas fa-arrow-left"></i> Volver a Lista
+        <i class="fas fa-arrow-left mr-2"></i> Volver a Lista
       </button>
     </div>
   </div>
 
   <!-- Error Message -->
-  <div *ngIf="error" class="alert alert-danger">
+  <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
     {{ error }}
   </div>
 
   <!-- Loading -->
-  <div *ngIf="loading" class="loading-container">
-    <div class="spinner"></div>
-    <p>Cargando...</p>
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-12">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+    <p class="mt-2 text-gray-600">Cargando...</p>
   </div>
 
   <!-- Vista Lista -->
-  <div *ngIf="vistaActual === 'lista' && !loading" class="lista-view">
+  <div *ngIf="vistaActual === 'lista' && !loading">
     
     <!-- Estadísticas -->
-    <div *ngIf="estadisticas" class="estadisticas-grid">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <i class="fas fa-shopping-cart"></i>
-        </div>
-        <div class="stat-content">
-          <h3>{{ estadisticas.totalComprasDelMes }}</h3>
-          <p>Compras del Mes</p>
-        </div>
-      </div>
-      
-      <div class="stat-card">
-        <div class="stat-icon">
-          <i class="fas fa-dollar-sign"></i>
-        </div>
-        <div class="stat-content">
-          <h3>{{ formatCurrency(estadisticas.montoTotalDelMes) }}</h3>
-          <p>Monto Total del Mes</p>
+    <div *ngIf="estadisticas" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+            <span class="text-white text-xl font-bold">{{ estadisticas.totalComprasDelMes }}</span>
+          </div>
+          <div class="ml-4">
+            <p class="text-gray-600 text-sm">Compras del Mes</p>
+          </div>
         </div>
       </div>
       
-      <div class="stat-card">
-        <div class="stat-icon">
-          <i class="fas fa-chart-line"></i>
-        </div>
-        <div class="stat-content">
-          <h3>{{ formatCurrency(estadisticas.promedioCompra) }}</h3>
-          <p>Promedio por Compra</p>
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+            <span class="text-white text-lg font-bold">$</span>
+          </div>
+          <div class="ml-4">
+            <p class="text-lg font-semibold text-gray-900">{{ formatCurrency(estadisticas.montoTotalDelMes) }}</p>
+            <p class="text-gray-600 text-sm">Monto Total del Mes</p>
+          </div>
         </div>
       </div>
       
-      <div class="stat-card" *ngIf="estadisticas.proveedorMasActivo">
-        <div class="stat-icon">
-          <i class="fas fa-truck"></i>
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+            <span class="text-white text-lg font-bold">$</span>
+          </div>
+          <div class="ml-4">
+            <p class="text-lg font-semibold text-gray-900">{{ formatCurrency(estadisticas.promedioCompra) }}</p>
+            <p class="text-gray-600 text-sm">Promedio por Compra</p>
+          </div>
         </div>
-        <div class="stat-content">
-          <h3>{{ estadisticas.proveedorMasActivo.nombreProveedor }}</h3>
-          <p>Proveedor Más Activo</p>
+      </div>
+      
+      <div class="bg-white border border-gray-200 rounded-lg p-4" *ngIf="estadisticas.proveedorMasActivo">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white">
+            <span class="text-sm font-bold">{{ estadisticas.proveedorMasActivo.nombreProveedor.substring(0, 2) }}</span>
+          </div>
+          <div class="ml-4">
+            <p class="text-lg font-semibold text-gray-900">{{ estadisticas.proveedorMasActivo.nombreProveedor }}</p>
+            <p class="text-gray-600 text-sm">Proveedor Más Activo</p>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Tabla de Compras -->
-    <div class="table-container">
-      <table class="compras-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Fecha</th>
-            <th>Proveedor</th>
-            <th>Items</th>
-            <th>Total</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let compra of compras">
-            <td>{{ compra.id }}</td>
-            <td>{{ formatDate(compra.fecha) }}</td>
-            <td>{{ compra.proveedor.nombre }}</td>
-            <td>{{ compra.totalItems }}</td>
-            <td>{{ formatCurrency(compra.total) }}</td>
-            <td>
-              <span class="estado-badge" [ngClass]="compra.estado.toLowerCase()">
-                {{ compra.estado }}
-              </span>
-            </td>
-            <td>
-              <button class="btn btn-sm btn-info" title="Ver Detalles">
-                <i class="fas fa-eye"></i>
-              </button>
-              <button class="btn btn-sm btn-warning" title="Editar">
-                <i class="fas fa-edit"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+        <div class="grid grid-cols-7 gap-4 text-sm font-medium text-gray-700">
+          <div>ID</div>
+          <div>Fecha</div>
+          <div>Proveedor</div>
+          <div>Items</div>
+          <div>Total</div>
+          <div>Estado</div>
+          <div>Acciones</div>
+        </div>
+      </div>
       
-      <div *ngIf="compras.length === 0 && !loading" class="no-data">
-        <i class="fas fa-inbox"></i>
-        <p>No hay compras registradas</p>
+      <div class="divide-y divide-gray-200">
+        <div *ngFor="let compra of compras" class="grid grid-cols-7 gap-4 px-6 py-4 hover:bg-gray-50 items-center">
+          <div class="text-sm font-medium text-gray-900">{{ compra.id }}</div>
+          <div class="text-sm text-gray-600">{{ formatDate(compra.fecha) }}</div>
+          <div class="text-sm text-gray-900">{{ compra.proveedor.nombre }}</div>
+          <div class="text-sm text-gray-600">{{ compra.totalItems }}</div>
+          <div class="text-sm font-medium text-gray-900">{{ formatCurrency(compra.total) }}</div>
+          <div>
+            <span class="inline-block px-2 py-1 text-xs font-medium rounded-full"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800': compra.estado === 'Completada',
+                    'bg-yellow-100 text-yellow-800': compra.estado === 'Pendiente',
+                    'bg-red-100 text-red-800': compra.estado === 'Cancelada'
+                  }">
+              {{ compra.estado }}
+            </span>
+          </div>
+          <div class="flex gap-3">
+            <button 
+              class="text-blue-600 hover:text-blue-800 transition-colors p-1" 
+              title="Ver Detalles"
+              (click)="verDetalles(compra)">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <button 
+              class="text-gray-600 hover:text-gray-800 transition-colors p-1" 
+              title="Editar"
+              (click)="editarCompra(compra)">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+              </svg>
+            </button>
+            <button 
+              class="text-red-600 hover:text-red-800 transition-colors p-1" 
+              title="Eliminar"
+              (click)="eliminarCompra(compra)">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="compras.length === 0 && !loading" class="text-center py-12">
+        <i class="fas fa-inbox text-gray-400 text-4xl mb-4"></i>
+        <p class="text-gray-600">No hay compras registradas</p>
       </div>
     </div>
   </div>
 
   <!-- Vista Nueva Compra -->
-  <div *ngIf="vistaActual === 'nueva' && !loading" class="nueva-compra-view">
+  <div *ngIf="vistaActual === 'nueva' && !loading">
     <form [formGroup]="compraForm" (ngSubmit)="guardarCompra()">
       
       <!-- Información General -->
-      <div class="form-section">
-        <h3>Información General</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="proveedor">Proveedor *</label>
-            <select id="proveedor" formControlName="proveedorId" class="form-control">
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ compraEditandoId ? 'Editar Compra #' + compraEditandoId : 'Nueva Compra' }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="proveedor" class="block text-sm font-medium text-gray-700 mb-1">Proveedor *</label>
+            <select id="proveedor" formControlName="proveedorId" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">Seleccione un proveedor</option>
               <option *ngFor="let proveedor of proveedores" [value]="proveedor.id">
                 {{ proveedor.nombre }}
@@ -138,48 +172,48 @@
             </select>
           </div>
           
-          <div class="form-group">
-            <label for="numeroFactura">Número de Factura</label>
+          <div>
+            <label for="numeroFactura" class="block text-sm font-medium text-gray-700 mb-1">Número de Factura</label>
             <input 
               type="text" 
               id="numeroFactura" 
               formControlName="numeroFactura" 
-              class="form-control"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Ej: F-001234">
           </div>
         </div>
         
-        <div class="form-group">
-          <label for="observaciones">Observaciones</label>
+        <div>
+          <label for="observaciones" class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
           <textarea 
             id="observaciones" 
             formControlName="observaciones" 
-            class="form-control"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             rows="3"
             placeholder="Observaciones adicionales sobre la compra..."></textarea>
         </div>
       </div>
 
       <!-- Insumos -->
-      <div class="form-section">
-        <div class="section-header">
-          <h3>Insumos a Comprar</h3>
-          <button type="button" class="btn btn-success btn-sm" (click)="agregarInsumo()">
-            <i class="fas fa-plus"></i> Agregar Insumo
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Insumos a Comprar</h3>
+          <button type="button" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors" (click)="agregarInsumo()">
+            <i class="fas fa-plus mr-1"></i> Agregar Insumo
           </button>
         </div>
 
-        <div formArrayName="insumos" class="insumos-container">
+        <div formArrayName="insumos" class="space-y-4">
           <div 
             *ngFor="let insumoGroup of insumosFormArray.controls; let i = index" 
             [formGroupName]="i" 
-            class="insumo-row">
+            class="grid grid-cols-1 md:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
             
-            <div class="form-group">
-              <label>Insumo *</label>
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Insumo *</label>
               <select 
                 formControlName="insumoId" 
-                class="form-control"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 (change)="onInsumoChange(i)">
                 <option value="">Seleccione un insumo</option>
                 <option *ngFor="let insumo of insumos" [value]="insumo.id">
@@ -188,40 +222,38 @@
               </select>
             </div>
             
-            <div class="form-group">
-              <label>Cantidad *</label>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad *</label>
               <input 
                 type="number" 
                 formControlName="cantidad" 
-                class="form-control"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 step="0.01"
                 min="0.01">
             </div>
             
-            <div class="form-group">
-              <label>Costo Unitario *</label>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Costo Unitario *</label>
               <input 
                 type="number" 
                 formControlName="costoUnitario" 
-                class="form-control"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 step="0.01"
                 min="0.01">
             </div>
             
-            <div class="form-group">
-              <label>Subtotal</label>
-              <input 
-                type="text" 
-                [value]="formatCurrency(calcularSubtotal(i))" 
-                class="form-control"
-                readonly>
-            </div>
-            
-            <div class="form-group actions">
-              <label>&nbsp;</label>
+            <div class="flex items-end">
+              <div class="w-full">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Subtotal</label>
+                <input 
+                  type="text" 
+                  [value]="formatCurrency(calcularSubtotal(i))" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100"
+                  readonly>
+              </div>
               <button 
                 type="button" 
-                class="btn btn-danger btn-sm" 
+                class="ml-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded flex items-center justify-center text-xs transition-colors" 
                 (click)="removerInsumo(i)"
                 [disabled]="insumosFormArray.length === 1">
                 <i class="fas fa-trash"></i>
@@ -231,24 +263,126 @@
         </div>
 
         <!-- Total -->
-        <div class="total-section">
-          <h4>Total: {{ formatCurrency(calcularTotal()) }}</h4>
+        <div class="text-right mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <h4 class="text-xl font-semibold text-blue-900">Total: {{ formatCurrency(calcularTotal()) }}</h4>
         </div>
       </div>
 
       <!-- Botones -->
-      <div class="form-actions">
-        <button type="button" class="btn btn-secondary" (click)="mostrarLista()">
-          Cancelar
+      <div class="flex justify-end gap-3">
+        <button type="button" class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" (click)="mostrarLista()">
+          <i class="fas fa-times mr-2"></i> Cancelar
         </button>
         <button 
           type="submit" 
-          class="btn btn-primary"
+          class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
           [disabled]="!compraForm.valid || insumosFormArray.length === 0 || loading">
-          <i class="fas fa-save"></i> 
-          {{ loading ? 'Guardando...' : 'Registrar Compra' }}
+          <i class="fas fa-save mr-2"></i> 
+          {{ loading ? 'Guardando...' : (compraEditandoId ? 'Actualizar Compra' : 'Registrar Compra') }}
         </button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal de Detalles -->
+<div *ngIf="mostrarModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" (click)="cerrarModal()">
+  <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto shadow-lg" (click)="$event.stopPropagation()">
+    <!-- Header del Modal -->
+    <div class="flex justify-between items-center p-4 border-b border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900">Detalle de Compra #{{ compraDetalle?.id }}</h3>
+      <button 
+        (click)="cerrarModal()"
+        class="text-gray-400 hover:text-gray-600 text-xl font-bold w-6 h-6 flex items-center justify-center"
+        title="Cerrar">
+        ×
+      </button>
+    </div>
+    
+    <!-- Contenido del Modal -->
+    <div class="p-4" *ngIf="compraDetalle">
+      <!-- Información General -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+          <span class="text-sm text-gray-600">Fecha:</span>
+          <p class="font-medium">{{ formatDate(compraDetalle.fecha) }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-600">Proveedor:</span>
+          <p class="font-medium">{{ compraDetalle.proveedor.nombre || 'N/A' }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-600">Estado:</span>
+          <span class="inline-block px-2 py-1 text-xs font-medium rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': compraDetalle.estado === 'Completada',
+                  'bg-yellow-100 text-yellow-800': compraDetalle.estado === 'Pendiente',
+                  'bg-red-100 text-red-800': compraDetalle.estado === 'Cancelada'
+                }">
+            {{ compraDetalle.estado }}
+          </span>
+        </div>
+        <div>
+          <span class="text-sm text-gray-600">Total:</span>
+          <p class="font-semibold text-lg">{{ formatCurrency(compraDetalle.total) }}</p>
+        </div>
+        <div *ngIf="compraDetalle.numeroFactura">
+          <span class="text-sm text-gray-600">Número Factura:</span>
+          <p class="font-medium">{{ compraDetalle.numeroFactura }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-600">Total Items:</span>
+          <p class="font-medium">{{ compraDetalle.totalItems }}</p>
+        </div>
+      </div>
+
+      <!-- Observaciones -->
+      <div *ngIf="compraDetalle.observaciones" class="mb-6">
+        <span class="text-sm text-gray-600">Observaciones:</span>
+        <p class="font-medium mt-1">{{ compraDetalle.observaciones }}</p>
+      </div>
+
+      <!-- Tabla de Insumos -->
+      <div class="mb-4">
+        <h4 class="text-md font-semibold text-gray-900 mb-3">Insumos Comprados</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-200 bg-gray-50">
+                <th class="text-left py-2 px-3 font-medium text-gray-600">INSUMO</th>
+                <th class="text-left py-2 px-3 font-medium text-gray-600">CANTIDAD</th>
+                <th class="text-right py-2 px-3 font-medium text-gray-600">PRECIO UNIT.</th>
+                <th class="text-right py-2 px-3 font-medium text-gray-600">SUBTOTAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let detalle of compraDetalle.detallesCompra" class="border-b border-gray-100">
+                <td class="py-2 px-3">
+                  <div class="font-medium">{{ detalle.insumo.nombre || 'N/A' }}</div>
+                  <div class="text-xs text-gray-500">{{ detalle.insumo.unidadMedida || 'N/A' }}</div>
+                </td>
+                <td class="py-2 px-3">{{ detalle.cantidad }}</td>
+                <td class="py-2 px-3 text-right">{{ formatCurrency(detalle.costoUnitario) }}</td>
+                <td class="py-2 px-3 text-right font-medium">{{ formatCurrency(detalle.subtotal) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer del Modal -->
+    <div class="flex justify-end gap-2 p-4 border-t border-gray-200 bg-gray-50">
+      <button 
+        class="px-4 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50"
+        (click)="cerrarModal()">
+        Cerrar
+      </button>
+      <button 
+        class="px-4 py-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
+        (click)="editarCompra(compraDetalle!); cerrarModal()">
+        Editar
+      </button>
+    </div>
   </div>
 </div>

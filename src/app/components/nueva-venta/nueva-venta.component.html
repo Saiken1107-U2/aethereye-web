@@ -1,0 +1,270 @@
+<div class="nueva-venta-container p-6 max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="mb-6">
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-900">Nueva Venta a Cliente Final</h1>
+      <button 
+        (click)="cancelar()"
+        class="text-gray-600 hover:text-gray-800">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+    <p class="text-gray-600 mt-2">Complete la información del cliente y agregue los productos</p>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-8">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    <p class="mt-2 text-gray-600">Procesando...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+    <div class="flex">
+      <i class="fas fa-exclamation-circle text-red-400 mr-2 mt-0.5"></i>
+      <div class="text-red-700">{{ error }}</div>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="success" class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+    <div class="flex">
+      <i class="fas fa-check-circle text-green-400 mr-2 mt-0.5"></i>
+      <div class="text-green-700">{{ success }}</div>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <form [formGroup]="ventaForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Información del Cliente -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Información del Cliente</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Nombre Cliente -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Nombre del Cliente *
+              </label>
+              <input
+                type="text"
+                formControlName="nombreCliente"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                [class.border-red-500]="nombreCliente?.invalid && nombreCliente?.touched">
+              <div *ngIf="nombreCliente?.invalid && nombreCliente?.touched" class="text-red-500 text-sm mt-1">
+                <div *ngIf="nombreCliente?.errors?.['required']">El nombre es obligatorio</div>
+                <div *ngIf="nombreCliente?.errors?.['maxlength']">Máximo 100 caracteres</div>
+              </div>
+            </div>
+
+            <!-- Correo Cliente -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+              <input
+                type="email"
+                formControlName="correoCliente"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                [class.border-red-500]="correoCliente?.invalid && correoCliente?.touched">
+              <div *ngIf="correoCliente?.invalid && correoCliente?.touched" class="text-red-500 text-sm mt-1">
+                <div *ngIf="correoCliente?.errors?.['email']">Formato de correo inválido</div>
+              </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+              <input
+                type="tel"
+                formControlName="telefonoCliente"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <!-- Método de Pago -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Método de Pago *</label>
+              <select
+                formControlName="metodoPago"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                [class.border-red-500]="metodoPagoControl?.invalid && metodoPagoControl?.touched">
+                <option value="">Seleccione método de pago</option>
+                <option *ngFor="let metodo of metodoPago" [value]="metodo">{{ metodo }}</option>
+              </select>
+              <div *ngIf="metodoPagoControl?.invalid && metodoPagoControl?.touched" class="text-red-500 text-sm mt-1">
+                El método de pago es obligatorio
+              </div>
+            </div>
+          </div>
+
+          <!-- Dirección -->
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Dirección de Entrega</label>
+            <textarea
+              formControlName="direccionCliente"
+              rows="2"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </textarea>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+            <textarea
+              formControlName="observaciones"
+              rows="2"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Productos -->
+        <div class="bg-white p-6 rounded-lg shadow">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Productos</h2>
+            <button
+              type="button"
+              (click)="agregarProducto()"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+              <i class="fas fa-plus mr-1"></i>Agregar Producto
+            </button>
+          </div>
+
+          <div formArrayName="productos" class="space-y-4">
+            <div *ngFor="let producto of productosFormArray.controls; let i = index" 
+                 [formGroupName]="i" 
+                 class="border border-gray-200 rounded-lg p-4">
+              
+              <div class="flex justify-between items-start mb-3">
+                <h3 class="font-medium text-gray-900">Producto {{ i + 1 }}</h3>
+                <button
+                  type="button"
+                  (click)="eliminarProducto(i)"
+                  class="text-red-600 hover:text-red-800">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <!-- Selección de Producto -->
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Producto *</label>
+                  <select
+                    formControlName="productoId"
+                    (change)="onProductoSeleccionado(i)"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Seleccione un producto</option>
+                    <option *ngFor="let prod of productos" [value]="prod.id">
+                      {{ prod.nombre }} (Stock: {{ prod.stock }})
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Cantidad -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad *</label>
+                  <input
+                    type="number"
+                    formControlName="cantidad"
+                    (input)="onCantidadChange()"
+                    min="1"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <div class="text-xs text-gray-500 mt-1">
+                    Stock: {{ obtenerStockProducto(producto.get('productoId')?.value) }}
+                  </div>
+                </div>
+
+                <!-- Precio Unitario -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Precio Unit.</label>
+                  <input
+                    type="number"
+                    formControlName="precioUnitario"
+                    (input)="onPrecioChange()"
+                    step="0.01"
+                    min="0.01"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+              </div>
+
+              <!-- Subtotal del producto -->
+              <div class="mt-2 text-right">
+                <span class="text-sm text-gray-600">Subtotal: </span>
+                <span class="font-medium">
+                  {{ formatearMoneda((producto.get('cantidad')?.value || 0) * (producto.get('precioUnitario')?.value || 0)) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Sin productos -->
+            <div *ngIf="productosFormArray.length === 0" class="text-center py-8 text-gray-500">
+              <i class="fas fa-box-open text-3xl mb-2"></i>
+              <p>No hay productos agregados</p>
+              <p class="text-sm">Haga clic en "Agregar Producto" para comenzar</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Venta -->
+      <div class="lg:col-span-1">
+        <div class="bg-white p-6 rounded-lg shadow sticky top-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Resumen de Venta</h2>
+          
+          <!-- Descuento -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Descuento</label>
+            <input
+              type="number"
+              formControlName="descuento"
+              (input)="onDescuentoChange()"
+              step="0.01"
+              min="0"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+
+          <!-- Cálculos -->
+          <div class="space-y-2 mb-6">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Subtotal:</span>
+              <span>{{ formatearMoneda(subtotal) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Descuento:</span>
+              <span class="text-red-600">-{{ formatearMoneda(descuento) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Impuestos (18%):</span>
+              <span>{{ formatearMoneda(impuestos) }}</span>
+            </div>
+            <hr>
+            <div class="flex justify-between text-lg font-semibold">
+              <span>Total:</span>
+              <span class="text-blue-600">{{ formatearMoneda(total) }}</span>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="space-y-3">
+            <button
+              type="submit"
+              [disabled]="ventaForm.invalid || productosFormArray.length === 0 || loading"
+              class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-3 px-4 rounded-lg font-medium transition-colors">
+              <i class="fas fa-save mr-2"></i>
+              <span *ngIf="!loading">Registrar Venta</span>
+              <span *ngIf="loading">Procesando...</span>
+            </button>
+            
+            <button
+              type="button"
+              (click)="cancelar()"
+              class="w-full bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-lg font-medium transition-colors">
+              <i class="fas fa-times mr-2"></i>Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

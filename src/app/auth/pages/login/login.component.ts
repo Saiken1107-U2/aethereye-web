@@ -62,7 +62,7 @@ export class LoginComponent {
           console.log('🔄 Redirigiendo a returnUrl:', this.returnUrl);
           this.router.navigateByUrl(this.returnUrl);
         } else {
-          if (usuario.rol === 'Admin') {
+          if (usuario.rol === 'Administrador' || usuario.rol === 'Admin') {
             console.log('👑 Redirigiendo a /admin');
             this.router.navigate(['/admin']);
           } else if (usuario.rol === 'Cliente') {

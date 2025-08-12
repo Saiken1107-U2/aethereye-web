@@ -7,7 +7,7 @@ import { Usuario } from '../models/usuario.model';
   providedIn: 'root'
 })
 export class UsuarioAdminService {
-  private apiUrl = 'https://localhost:7052/api/Usuarios';
+  private apiUrl = 'http://localhost:5118/api/Usuarios';
 
   constructor(private http: HttpClient) {}
 
@@ -28,6 +28,6 @@ export class UsuarioAdminService {
   }
 
   obtenerRoles(): Observable<any[]> {
-    return this.http.get<any[]>('https://localhost:7052/api/Roles');
+    return this.http.get<any[]>('http://localhost:5118/api/Roles');
   }
 }

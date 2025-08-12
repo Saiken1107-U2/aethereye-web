@@ -1,0 +1,133 @@
+/* Estilos específicos para el componente de recetas */
+
+.container {
+  min-height: 100vh;
+}
+
+/* Animaciones para modales */
+.modal-overlay {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Estilos para tabla responsive */
+@media (max-width: 768px) {
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  .table-responsive table {
+    min-width: 800px;
+  }
+}
+
+/* Estilos para campos de formulario con error */
+.form-field-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444;
+}
+
+/* Destacar filas de recetas */
+.receta-row:hover {
+  background-color: #f8fafc;
+  transition: background-color 0.2s ease;
+}
+
+/* Estilos para badges de estado */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badge-success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.badge-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Estilos para el análisis de costos */
+.cost-analysis {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.cost-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Mejoras visuales para botones */
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  border: none;
+  color: #065f46;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  border: none;
+  color: #7f1d1d;
+}
+
+/* Loading spinner personalizado */
+.custom-spinner {
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

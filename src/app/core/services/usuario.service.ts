@@ -7,7 +7,7 @@ import { Usuario, ActualizarPerfilRequest, CambiarPasswordRequest } from '../mod
   providedIn: 'root'
 })
 export class UsuarioService {
-  private apiUrl = 'https://localhost:7052/api/Usuarios';
+  private apiUrl = 'http://localhost:5118/api/Usuarios';
 
   constructor(private http: HttpClient) {}
 

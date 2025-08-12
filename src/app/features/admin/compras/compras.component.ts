@@ -25,6 +25,9 @@ export interface Compra {
   }>;
   totalItems: number;
   estado: string;
+  numeroFactura?: string;
+  observaciones?: string;
+  proveedorId?: number;
 }
 
 export interface Proveedor {
@@ -62,6 +65,10 @@ export class ComprasComponent implements OnInit {
   
   // Estadísticas
   estadisticas: any = null;
+  
+  // Modal de detalles
+  mostrarModal = false;
+  compraDetalle: Compra | null = null;
 
   constructor(
     private comprasService: ComprasService,
@@ -183,6 +190,7 @@ export class ComprasComponent implements OnInit {
 
   mostrarLista(): void {
     this.vistaActual = 'lista';
+    this.compraEditandoId = null; // Limpiar el ID de edición
   }
 
   guardarCompra(): void {
@@ -200,18 +208,38 @@ export class ComprasComponent implements OnInit {
         }))
       };
 
-      this.comprasService.registrarCompra(compraData).subscribe({
-        next: (response) => {
-          console.log('Compra registrada:', response);
-          this.mostrarLista();
-          this.cargarDatos();
-        },
-        error: (err) => {
-          this.error = 'Error al registrar la compra';
-          this.loading = false;
-          console.error('Error:', err);
-        }
-      });
+      // Verificar si estamos editando o creando
+      if (this.compraEditandoId) {
+        // Actualizar compra existente
+        this.comprasService.actualizarCompra(this.compraEditandoId, compraData).subscribe({
+          next: (response) => {
+            console.log('Compra actualizada:', response);
+            this.mostrarLista();
+            this.cargarDatos();
+            this.loading = false;
+          },
+          error: (err) => {
+            this.error = 'Error al actualizar la compra';
+            this.loading = false;
+            console.error('Error:', err);
+          }
+        });
+      } else {
+        // Crear nueva compra
+        this.comprasService.registrarCompra(compraData).subscribe({
+          next: (response) => {
+            console.log('Compra registrada:', response);
+            this.mostrarLista();
+            this.cargarDatos();
+            this.loading = false;
+          },
+          error: (err) => {
+            this.error = 'Error al registrar la compra';
+            this.loading = false;
+            console.error('Error:', err);
+          }
+        });
+      }
     } else {
       this.error = 'Por favor complete todos los campos requeridos';
     }
@@ -242,4 +270,80 @@ export class ComprasComponent implements OnInit {
     const insumo = this.insumos.find(i => i.id === insumoId);
     return insumo ? insumo.nombre : 'Desconocido';
   }
+
+  // Nuevos métodos para ver detalles, editar y eliminar
+  verDetalles(compra: Compra): void {
+    this.comprasService.getCompra(compra.id).subscribe({
+      next: (data) => {
+        this.compraDetalle = data;
+        this.mostrarModal = true;
+      },
+      error: (err) => {
+        this.error = 'Error al cargar los detalles de la compra';
+        console.error('Error:', err);
+      }
+    });
+  }
+
+  cerrarModal(): void {
+    this.mostrarModal = false;
+    this.compraDetalle = null;
+  }
+
+  editarCompra(compra: Compra): void {
+    // Cargar los datos de la compra en el formulario
+    this.comprasService.getCompra(compra.id).subscribe({
+      next: (data) => {
+        // Limpiar el formulario existente
+        this.compraForm.patchValue({
+          proveedorId: data.proveedorId,
+          numeroFactura: data.numeroFactura || '',
+          observaciones: data.observaciones || ''
+        });
+
+        // Limpiar y repoblar los insumos
+        const insumosArray = this.compraForm.get('insumos') as FormArray;
+        insumosArray.clear();
+
+        if (data.detallesCompra && data.detallesCompra.length > 0) {
+          data.detallesCompra.forEach((detalle: any) => {
+            insumosArray.push(this.fb.group({
+              insumoId: [detalle.insumoId, Validators.required],
+              cantidad: [detalle.cantidad, [Validators.required, Validators.min(0.01)]],
+              costoUnitario: [detalle.costoUnitario, [Validators.required, Validators.min(0.01)]]
+            }));
+          });
+        }
+
+        // Cambiar a vista de edición
+        this.vistaActual = 'nueva';
+        this.compraEditandoId = compra.id;
+      },
+      error: (err) => {
+        this.error = 'Error al cargar los datos de la compra para edición';
+        console.error('Error:', err);
+      }
+    });
+  }
+
+  eliminarCompra(compra: Compra): void {
+    if (confirm(`¿Está seguro que desea eliminar la compra #${compra.id}?\n\nEsta acción no se puede deshacer.`)) {
+      this.loading = true;
+      this.comprasService.eliminarCompra(compra.id).subscribe({
+        next: (response) => {
+          console.log('Compra eliminada:', response);
+          this.cargarDatos(); // Recargar la lista
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error = 'Error al eliminar la compra';
+          this.loading = false;
+          console.error('Error:', err);
+        }
+      });
+    }
+  }
+
+  // Variable para controlar si estamos editando
+  compraEditandoId: number | null = null;
 }

@@ -1,0 +1,231 @@
+.carrito-container {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+/* Animaciones para productos */
+.producto-card {
+  transition: all 0.3s ease-in-out;
+}
+
+.producto-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Efectos para botones del carrito */
+.btn-carrito {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-carrito::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.btn-carrito:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Animaciones para agregar al carrito */
+@keyframes addToCart {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.btn-agregado {
+  animation: addToCart 0.3s ease-in-out;
+}
+
+/* Controles de cantidad */
+.cantidad-controls {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.cantidad-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.cantidad-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.cantidad-btn:active {
+  transform: scale(0.95);
+}
+
+/* Resumen del carrito sticky */
+.carrito-resumen {
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+}
+
+/* Efectos para items del carrito */
+.carrito-item {
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.carrito-item:hover {
+  border-left-color: #3b82f6;
+  background-color: #f8fafc;
+}
+
+/* Animaciones para totales */
+.total-section {
+  background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+  border: 2px solid #0284c7;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.total-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0c4a6e;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Filtros responsivos */
+@media (max-width: 768px) {
+  .filtros-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .productos-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .carrito-resumen {
+    position: static;
+    margin-top: 2rem;
+  }
+  
+  .carrito-container {
+    padding: 1rem;
+  }
+}
+
+/* Estados de productos */
+.producto-disponible {
+  border: 2px solid #10b981;
+}
+
+.producto-poco-stock {
+  border: 2px solid #f59e0b;
+}
+
+.producto-sin-stock {
+  border: 2px solid #ef4444;
+  opacity: 0.6;
+}
+
+/* Badges de stock */
+.stock-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.stock-alto {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.stock-medio {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.stock-bajo {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Efectos de carga */
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Transiciones suaves */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efectos hover para categorías */
+.categoria-filter {
+  transition: all 0.3s ease;
+}
+
+.categoria-filter:hover {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  transform: translateY(-2px);
+}
+
+/* Indicador de carrito lleno */
+.carrito-full {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 2px solid #16a34a;
+}
+
+/* Botón flotante para móvil */
+@media (max-width: 640px) {
+  .btn-checkout-floating {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 50;
+    border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}

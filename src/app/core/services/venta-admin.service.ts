@@ -16,7 +16,7 @@ export interface VentaAdmin {
   providedIn: 'root'
 })
 export class VentaAdminService {
-  private apiUrl = 'https://localhost:7052/api/Ventas';
+  private apiUrl = 'http://localhost:5118/api/Ventas';
 
   constructor(private http: HttpClient) {}
 

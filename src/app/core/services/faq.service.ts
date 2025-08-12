@@ -7,7 +7,7 @@ import { Faq } from '../models/faq.model';
   providedIn: 'root'
 })
 export class FaqService {
-  private apiUrl = 'https://localhost:7052/api/FAQ';
+  private apiUrl = 'http://localhost:5118/api/FAQ';
 
   constructor(private http: HttpClient) {}
 

@@ -3,11 +3,24 @@
   <aside class="w-64 bg-blue-600 text-white flex flex-col p-6 space-y-4">
     <h2 class="text-2xl font-bold mb-6">Zona Cliente</h2>
     <nav class="flex flex-col space-y-2">
-      <a routerLink="/cliente/perfil" routerLinkActive="font-bold underline">Perfil</a>
-      <a routerLink="/cliente/documentos" routerLinkActive="font-bold underline">Documentos</a>
-      <a routerLink="/cliente/compras" routerLinkActive="font-bold underline">Compras</a>
-      <a routerLink="/cliente/cotizaciones" routerLinkActive="font-bold underline">Cotizaciones</a>
-      <a routerLink="/cliente/comentarios" routerLinkActive="font-bold underline">Comentarios</a>
+      <a routerLink="/cliente/carrito" routerLinkActive="font-bold underline" class="text-yellow-300 hover:text-yellow-100">
+        <i class="fas fa-shopping-cart mr-2"></i>🛒 Carrito de Compras
+      </a>
+      <a routerLink="/cliente/compras" routerLinkActive="font-bold underline">
+        <i class="fas fa-shopping-bag mr-2"></i>Mis Compras
+      </a>
+      <a routerLink="/cliente/perfil" routerLinkActive="font-bold underline">
+        <i class="fas fa-user mr-2"></i>Mi Perfil
+      </a>
+      <a routerLink="/cliente/cotizaciones" routerLinkActive="font-bold underline">
+        <i class="fas fa-file-invoice mr-2"></i>Cotizaciones
+      </a>
+      <a routerLink="/cliente/documentos" routerLinkActive="font-bold underline">
+        <i class="fas fa-folder mr-2"></i>Documentos
+      </a>
+      <a routerLink="/cliente/comentarios" routerLinkActive="font-bold underline">
+        <i class="fas fa-comments mr-2"></i>Comentarios
+      </a>
     </nav>
     <button class="mt-auto bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100" (click)="cerrarSesion()">
       Cerrar sesión

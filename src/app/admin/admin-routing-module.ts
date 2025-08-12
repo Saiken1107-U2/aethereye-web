@@ -10,6 +10,7 @@ import { CotizacionesAdminComponent } from '../admin/pages/cotizaciones/cotizaci
 import { ProveedoresComponent } from '../features/admin/proveedores/proveedores.component';
 import { InsumosComponent } from '../features/admin/insumos/insumos.component';
 import { ComprasComponent } from '../features/admin/compras/compras.component';
+import { RecetasComponent } from '../features/admin/recetas/recetas.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'usuarios', component: UsuariosComponent },
       { path: 'productos', component: ProductosComponent },
+      { path: 'recetas', component: RecetasComponent },
       { path: 'ventas', component: VentasComponent },
       { path: 'cotizaciones', component: CotizacionesAdminComponent },
       { path: 'comentarios', component: ComentariosComponent },

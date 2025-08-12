@@ -17,7 +17,15 @@ const routes: Routes = [
       { path: 'compras', component: ComprasComponent },
       { path: 'cotizaciones', component: CotizacionesClienteComponent },
       { path: 'comentarios', component: ComentariosComponent },
-      { path: '', redirectTo: 'perfil', pathMatch: 'full' }
+      { 
+        path: 'carrito', 
+        loadComponent: () => import('./pages/carrito-compras/carrito-compras.component').then(c => c.CarritoComprasComponent)
+      },
+      { 
+        path: 'checkout', 
+        loadComponent: () => import('./pages/checkout/checkout.component').then(c => c.CheckoutComponent)
+      },
+      { path: '', redirectTo: 'carrito', pathMatch: 'full' }
     ]
   }
 ];
